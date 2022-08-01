@@ -68,12 +68,12 @@ public class IntListTest {
         assertEquals(IntList.of(1, 2, 3), A);
     }
 
-    // public void main(String args[]) {
-    //     testList();
-    //     testdSquareList();
-    //     testSquareListRecursive();
-    //     testDcatenate();
-    //     testCatenate();
-    // }
+    public void main(String args[]) {
+        testList();
+        testdSquareList();
+        testSquareListRecursive();
+        testDcatenate();
+        testCatenate();
+    }
 
 }
