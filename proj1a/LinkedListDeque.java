@@ -70,6 +70,9 @@ public class LinkedListDeque<T> {
     }
 
     public T removeFirst() {
+        if (size == 0) {
+            return null;
+        }
         Node temp = head.next;
         T d = temp.data;
         head.next = temp.next;
@@ -80,6 +83,9 @@ public class LinkedListDeque<T> {
     }
 
     public T removeLast() {
+        if (size == 0) {
+            return null;
+        }
         Node temp = rear.prev;
         T d = temp.data;
         temp.prev.next = temp.next;

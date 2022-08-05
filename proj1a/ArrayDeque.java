@@ -93,23 +93,24 @@ public class ArrayDeque<T> {
         }
         head = (head + 1) % (capacity + 1);
         --size;
-        if (capacity >= 16 && capacity >= 4 * size) {
+        T d = data[head];
+        if (capacity >= 16 && capacity > 4 * size) {
             shrink();
         }
-        return data[head];
+        return d;
     }
 
     public T removeLast() {
         if (size == 0) {
             return null;
         }
-        T temp = data[rear];
+        T d = data[rear];
         rear = (rear - 1 + capacity + 1) % (capacity + 1);
         --size;
         if (capacity >= 16 && capacity >= 4 * size) {
             shrink();
         }
-        return temp;
+        return d;
     }
 
     public T get(int index) {

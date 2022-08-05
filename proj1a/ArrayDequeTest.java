@@ -1,6 +1,14 @@
 /** Performs some basic linked list tests. */
 public class ArrayDequeTest {
-	
+	/* method for printing out elements equal checks. */
+	public static boolean checkEqual(Integer expected, Integer actual) {
+		if (expected != actual) {
+			System.out.println("removeFirst() returned " + actual + ", but expected: " + expected);
+			return false;
+		}
+		return true;
+	}
+
 	/* Utility method for printing out empty checks. */
 	public static boolean checkEmpty(boolean expected, boolean actual) {
 		if (expected != actual) {
@@ -71,13 +79,26 @@ public class ArrayDequeTest {
 		// should be empty 
 		boolean passed = checkEmpty(true, lld1.isEmpty());
 
-		lld1.addFirst(10);
-		// should not be empty 
-		passed = checkEmpty(false, lld1.isEmpty()) && passed;
+		// lld1.addFirst(10);
+		// // should not be empty 
+		// passed = checkEmpty(false, lld1.isEmpty()) && passed;
 
-		lld1.removeFirst();
-		// should be empty 
-		passed = checkEmpty(true, lld1.isEmpty()) && passed;
+		// lld1.removeFirst();
+		// // should be empty 
+		// passed = checkEmpty(true, lld1.isEmpty()) && passed;
+
+		for (int i = 0; i < 8; ++i) {
+			lld1.addLast(i);
+		}
+		for (Integer i = 0; i < 8; ++i) {
+			passed = checkEqual(i, lld1.removeFirst());
+		}
+		for (int i = 0; i < 33; ++i) {
+			lld1.addLast(i);
+		}
+		for (Integer i = 0; i < 16; ++i) {
+			passed = checkEqual(i, lld1.removeFirst());
+		}
 
 		printTestStatus(passed);
 	}
