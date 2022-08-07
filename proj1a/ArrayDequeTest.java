@@ -1,7 +1,7 @@
 /** Performs some basic linked list tests. */
 public class ArrayDequeTest {
 	/* method for printing out elements equal checks. */
-	public static boolean checkEqual(Integer expected, Integer actual) {
+	public static boolean checkEqual(int expected, int actual) {
 		if (expected != actual) {
 			System.out.println("removeFirst() returned " + actual + ", but expected: " + expected);
 			return false;
@@ -86,17 +86,10 @@ public class ArrayDequeTest {
 		// lld1.removeFirst();
 		// // should be empty 
 		// passed = checkEmpty(true, lld1.isEmpty()) && passed;
-
-		for (int i = 0; i < 8; ++i) {
+		for (int i = 0; i < 65537; ++i) {
 			lld1.addLast(i);
 		}
-		for (Integer i = 0; i < 8; ++i) {
-			passed = checkEqual(i, lld1.removeFirst());
-		}
-		for (int i = 0; i < 33; ++i) {
-			lld1.addLast(i);
-		}
-		for (Integer i = 0; i < 16; ++i) {
+		for (int i = 0; i < 65536; ++i) {
 			passed = checkEqual(i, lld1.removeFirst());
 		}
 
