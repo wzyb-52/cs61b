@@ -84,7 +84,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         }
         --size; // No put actually
         if (p.key.compareTo(key) == 0) {
-            ;
+            p.value = value;
         } else if (p.key.compareTo(key) < 0) {
             p.right = putHelper(key, value, p.right);
         } else {
