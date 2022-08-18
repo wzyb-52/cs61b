@@ -89,7 +89,7 @@ public class Board implements WorldState {
             }
         }
         /** Don't caculate the blank. */
-        if (tileAt(size - 1, size - 1) == BLANK) {
+        if (tileAt(size - 1, size - 1) != BLANK) {
             distance -= 1;
         }
         return distance;
@@ -153,5 +153,16 @@ public class Board implements WorldState {
         }
         s.append("\n");
         return s.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 0;
+        for (int i = 0; i < size; ++i) {
+            for (int j = 0; j < size; ++j) {
+                result = result * 31 + tileAt(i, j);
+            }
+        }
+        return result;
     }
 }
