@@ -11,8 +11,8 @@ public class BreadthFirstDemo {
 
         int startX = 1;
         int startY = 1;
-        int targetX = maze.N();
-        int targetY = maze.N();
+        int targetX = maze.N() - 3;
+        int targetY = maze.N() - 3;
 
         MazeExplorer mbfp = new MazeBreadthFirstPaths(maze, startX, startY, targetX, targetY);
         mbfp.solve();

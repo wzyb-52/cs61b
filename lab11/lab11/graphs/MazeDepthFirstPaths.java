@@ -43,7 +43,7 @@ public class MazeDepthFirstPaths extends MazeExplorer {
                 distTo[w] = distTo[v] + 1;
                 dfs(w);
                 if (targetFound) {
-                    return;
+                    return; // breaks the iteration.
                 }
             }
         }

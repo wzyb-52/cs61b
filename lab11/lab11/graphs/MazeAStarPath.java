@@ -1,5 +1,7 @@
 package lab11.graphs;
 
+import edu.princeton.cs.algs4.MinPQ;
+
 /**
  *  @author Josh Hug
  */
@@ -8,6 +10,32 @@ public class MazeAStarPath extends MazeExplorer {
     private int t;
     private boolean targetFound = false;
     private Maze maze;
+
+    /**
+     *  A Comparable class Node to used in MinPQ
+     * */
+    private class Node implements Comparable<Node> {
+        private int ver;
+        private int dist;
+
+        public Node(int v, int d) {
+            ver = v;
+            dist = d + manhattan();
+        }
+
+        private int manhattan() {
+            return Math.abs(maze.toX(t) - maze.toX(ver)) + Math.abs(maze.toY(t) - maze.toY(ver));
+        }
+
+        public int vertex() {
+            return ver;
+        }
+
+        @Override
+        public int compareTo(Node o) {
+            return dist - o.dist;
+        }
+    }
 
     public MazeAStarPath(Maze m, int sourceX, int sourceY, int targetX, int targetY) {
         super(m);
@@ -32,6 +60,32 @@ public class MazeAStarPath extends MazeExplorer {
     /** Performs an A star search from vertex s. */
     private void astar(int s) {
         // TODO
+        if (s == t) {
+            announce();
+            return;
+        }
+        MinPQ<Node> pq = new MinPQ<>();
+        Node sN = new Node(s, distTo[s]);
+        pq.insert(sN);
+
+        while (!pq.isEmpty()) {
+            Node pN = pq.delMin();
+            int p = pN.vertex();
+            for (int w : maze.adj(p)) {
+                if (marked[w]) {
+                    continue;
+                }
+                distTo[w] = distTo[p] + 1;
+                edgeTo[w] = p;
+                marked[w] = true;
+                announce();
+                if (w == t) {
+                    return;
+                } else {
+                    pq.insert(new Node(w, distTo[w]));
+                }
+            }
+        }
     }
 
     @Override
