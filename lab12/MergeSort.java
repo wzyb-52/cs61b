@@ -1,5 +1,11 @@
 import edu.princeton.cs.algs4.Queue;
 
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+import java.util.SplittableRandom;
+
 public class MergeSort {
     /**
      * Removes and returns the smallest item that is in q1 or q2.
@@ -35,7 +41,14 @@ public class MergeSort {
     private static <Item extends Comparable> Queue<Queue<Item>>
             makeSingleItemQueues(Queue<Item> items) {
         // Your code here!
-        return null;
+        Queue<Queue<Item>> queueList = new Queue<>();
+        while (!items.isEmpty()) {
+            Item temp = items.dequeue();
+            Queue<Item> queueNode = new Queue<>();
+            queueNode.enqueue(temp);
+            queueList.enqueue(queueNode);
+        }
+        return queueList;
     }
 
     /**
@@ -54,13 +67,54 @@ public class MergeSort {
     private static <Item extends Comparable> Queue<Item> mergeSortedQueues(
             Queue<Item> q1, Queue<Item> q2) {
         // Your code here!
-        return null;
+        Queue<Item> mergedQueue = new Queue<>();
+        int len = q1.size() + q2.size();
+        for (int i = 0; i < len; ++i) {
+            mergedQueue.enqueue(getMin(q1, q2));
+        }
+        return mergedQueue;
     }
 
     /** Returns a Queue that contains the given items sorted from least to greatest. */
     public static <Item extends Comparable> Queue<Item> mergeSort(
             Queue<Item> items) {
         // Your code here!
-        return items;
+        if (items.isEmpty()) {
+            return items;
+        }
+        Queue<Queue<Item>> queueList = makeSingleItemQueues(items);
+        /** merge the top two queue<item> and then enqueue the new queue */
+        while (queueList.size() > 1) {
+            queueList.enqueue(mergeSortedQueues(queueList.dequeue(), queueList.dequeue()));
+        }
+        return queueList.dequeue();
+    }
+
+    /** The test1 is a simple test */
+    @Test
+    public void test1() {
+        Queue<String> nameQueue = new Queue<>();
+        nameQueue.enqueue("Carolt");
+        nameQueue.enqueue("Bob");
+        nameQueue.enqueue("David");
+        nameQueue.enqueue("Anne");
+        nameQueue = mergeSort(nameQueue);
+        assertEquals("Anne", nameQueue.dequeue());
+        assertEquals("Bob", nameQueue.dequeue());
+        assertEquals("Carolt", nameQueue.dequeue());
+        assertEquals("David", nameQueue.dequeue());
+    }
+
+    /** The test2 is a little more complex, but still very easy. */
+    @Test
+    public void test2() {
+        Queue<String> nameQueue = new Queue<>();
+        for (int i = 99; i >= 0; --i) {
+            nameQueue.enqueue("Carolt" + String.format("%2d", i));
+        }
+        nameQueue = mergeSort(nameQueue);
+        for (int i = 0; i < 100; ++i) {
+            assertEquals("Carolt" + String.format("%2d", i), nameQueue.dequeue());
+        }
     }
 }

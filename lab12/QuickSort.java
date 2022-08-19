@@ -1,4 +1,7 @@
 import edu.princeton.cs.algs4.Queue;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class QuickSort {
     /**
@@ -48,12 +51,57 @@ public class QuickSort {
             Queue<Item> unsorted, Item pivot,
             Queue<Item> less, Queue<Item> equal, Queue<Item> greater) {
         // Your code here!
+        for (Item item : unsorted) {
+            int result = item.compareTo(pivot);
+            if (result < 0) {
+                less.enqueue(item);
+            } else if (result > 0) {
+                greater.enqueue(item);
+            } else {
+                equal.enqueue(item);
+            }
+        }
     }
 
     /** Returns a Queue that contains the given items sorted from least to greatest. */
     public static <Item extends Comparable> Queue<Item> quickSort(
             Queue<Item> items) {
         // Your code here!
-        return items;
+        if (items.size() <= 1) {
+            return items;
+        }
+        Queue<Item> less = new Queue<>(), equal = new Queue<>(), greater = new Queue<>();
+        partition(items, getRandomItem(items), less, equal, greater);
+        less = quickSort(less);
+        greater = quickSort(greater);
+        return catenate(catenate(less, equal), greater);
+    }
+
+    /** The test1 is a simple test */
+    @Test
+    public void test1() {
+        Queue<String> nameQueue = new Queue<>();
+        nameQueue.enqueue("Carolt");
+        nameQueue.enqueue("Bob");
+        nameQueue.enqueue("David");
+        nameQueue.enqueue("Anne");
+        nameQueue = quickSort(nameQueue);
+        assertEquals("Anne", nameQueue.dequeue());
+        assertEquals("Bob", nameQueue.dequeue());
+        assertEquals("Carolt", nameQueue.dequeue());
+        assertEquals("David", nameQueue.dequeue());
+    }
+
+    /** The test2 is a little more complex, but still very easy. */
+    @Test
+    public void test2() {
+        Queue<String> nameQueue = new Queue<>();
+        for (int i = 99; i >= 0; --i) {
+            nameQueue.enqueue("Carolt" + String.format("%2d", i));
+        }
+        nameQueue = quickSort(nameQueue);
+        for (int i = 0; i < 100; ++i) {
+            assertEquals("Carolt" + String.format("%2d", i), nameQueue.dequeue());
+        }
     }
 }
