@@ -5,6 +5,30 @@
  *
  */
 public class RadixSort {
+    private static class compString {
+        String str;
+        int index;
+        char toComp;
+        public compString(String s) {
+            str = s;
+            index = -1;
+            toComp = 0;
+        }
+        public char setIndex(int d) {
+            index = d;
+            toComp = index >= str.length() ? 0 : str.charAt(index);
+            return toComp;
+        }
+
+        public char getToComp() {
+            return toComp;
+        }
+
+        public String getStr() {
+            return str;
+        }
+    }
+
     /**
      * Does LSD radix sort on the passed in array with the following restrictions:
      * The array can only have ASCII Strings (sequence of 1 byte characters)
@@ -17,7 +41,52 @@ public class RadixSort {
      */
     public static String[] sort(String[] asciis) {
         // TODO: Implement LSD Sort
-        return null;
+        compString[] ascii = new compString[asciis.length];
+
+        /** Initializes the compStrings arrow and finds the max index. */
+        int maxIndex = 0;
+        for (int i = 0; i < asciis.length; ++i) {
+            String str = asciis[i];
+            maxIndex = str.length() > maxIndex ? str.length() : maxIndex;
+            ascii[i] = new compString(str);
+        }
+
+        /** Radix LSD Sort */
+        for (int index = maxIndex - 1; index >= 0; --index) {
+            ascii = sortHelperLSD(ascii, index);
+        }
+
+        /** Constructs a new String arrow. */
+        String[] newAsciis = new String[asciis.length];
+        for (int i = 0; i < asciis.length; ++i) {
+            newAsciis[i] = ascii[i].getStr();
+        }
+        return newAsciis;
+    }
+
+    /**
+     * LSD helper method that performs a destructive counting sort the array of
+     * Strings based off characters at a specific index.
+     * @param asciis Input array of compStrings
+     * @param index The position to sort the Strings on.
+     */
+    private static compString[] sortHelperLSD(compString[] asciis, int index) {
+        int[] counting = new int[256];
+        for (compString item : asciis) {
+            counting[item.setIndex(index)]++;
+        }
+        int[] starts = new int[256];
+        for (int i = 0, pos = 0; i < 256; ++i) {
+            starts[i] = pos;
+            pos += counting[i];
+        }
+        compString[] temp = new compString[asciis.length];
+        for (compString item : asciis) {
+            char c = item.getToComp();
+            int pos = starts[c]++;
+            temp[pos] = item;
+        }
+        return temp;
     }
 
     /**
