@@ -24,30 +24,45 @@ public class Router {
      */
     public static List<Long> shortestPath(GraphDB g, double stlon, double stlat,
                                           double destlon, double destlat) {
+        /** This map stores all Nodes visited for relaxation and avoiding repeadly visitation. */
+        Map<Long, SearchNode> visitedNodes = new HashMap<>();
+
         /** Initialize the source Node and the minHeap. */
         long sId = g.closest(stlon, stlat), destId = g.closest(destlon, destlat);
         SearchNode sourceNode = new SearchNode(sId, 0, g.distance(sId, destId), null);
         PriorityQueue<SearchNode> minHeap = new PriorityQueue<>();
         minHeap.add(sourceNode);
+        visitedNodes.put(sId, sourceNode);
 
         boolean ifRouteFound = false;
         SearchNode route = null;
         while (!minHeap.isEmpty()) {
             SearchNode parentN = minHeap.remove();
             long parentId = parentN.currId;
+            /** Breaks if target found. */
             if (parentId == destId) {
                 ifRouteFound = true;
                 route = parentN;
                 break;
             }
-
+            /** Visits and relaxes all neighbor Nodes. */
             for (long childId : g.adjacent(parentId)) {
+                /** A Node can't be its own grandfather. */
                 if (parentN.lastNode != null && parentN.lastNode.currId == childId) {
                     continue;
                 }
-                SearchNode childN = new SearchNode(childId,
-                        parentN.routeDistance + g.distance(parentId, childId),
-                        g.distance(childId, destId), parentN);
+                /** Three conditions according to this child Node whether visited or need relaxation  */
+                double routeDistance = parentN.routeDistance + g.distance(parentId, childId);
+                SearchNode childN = new SearchNode(childId, routeDistance, g.distance(childId, destId), parentN);
+                if (visitedNodes.containsKey(childId)) {
+                    if (routeDistance >= visitedNodes.get(childId).routeDistance) {
+                        continue;   // i.) Can't be the shortest path.
+                    } else {
+                        visitedNodes.get(childId).routeDistance = routeDistance;    // ii.) Relaxation.
+                    }
+                } else {
+                    visitedNodes.put(childId, childN);  // iii.) A new Node.
+                }
                 minHeap.add(childN);
             }
         }
