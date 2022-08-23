@@ -118,6 +118,14 @@ public class GraphDB {
     }
 
     /**
+     *  Connects two nodes.
+     * */
+    void connect(long id1, long id2) {
+        nodes.get(id1).adjNodes.add(id2);
+        nodes.get(id2).adjNodes.add(id1);
+    }
+
+    /**
      * Returns an iterable of all vertex IDs in the graph.
      * @return An iterable of id's of all vertices in the graph.
      */
