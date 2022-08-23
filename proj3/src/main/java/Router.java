@@ -1,5 +1,4 @@
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,7 +24,45 @@ public class Router {
      */
     public static List<Long> shortestPath(GraphDB g, double stlon, double stlat,
                                           double destlon, double destlat) {
-        return null; // FIXME
+        /** Initialize the source Node and the minHeap. */
+        long sId = g.closest(stlon, stlat), destId = g.closest(destlon, destlat);
+        SearchNode sourceNode = new SearchNode(sId, 0, g.distance(sId, destId), null);
+        PriorityQueue<SearchNode> minHeap = new PriorityQueue<>();
+        minHeap.add(sourceNode);
+
+        boolean ifRouteFound = false;
+        SearchNode route = null;
+        while (!minHeap.isEmpty()) {
+            SearchNode parentN = minHeap.remove();
+            long parentId = parentN.currId;
+            if (parentId == destId) {
+                ifRouteFound = true;
+                route = parentN;
+                break;
+            }
+
+            for (long childId : g.adjacent(parentId)) {
+                if (parentN.lastNode != null && parentN.lastNode.currId == childId) {
+                    continue;
+                }
+                SearchNode childN = new SearchNode(childId,
+                        parentN.routeDistance + g.distance(parentId, childId),
+                        g.distance(childId, destId), parentN);
+                minHeap.add(childN);
+            }
+        }
+
+        if (!ifRouteFound) {
+            throw new RuntimeException("Routing fails!");
+        }
+        List<Long> pathOfIds = new ArrayList<>();
+        while (route != null) {
+            pathOfIds.add(route.currId);
+            route = route.lastNode;
+        }
+        Collections.reverse(pathOfIds);
+
+        return pathOfIds; // FIXME
     }
 
     /**
@@ -158,6 +195,36 @@ public class Router {
         @Override
         public int hashCode() {
             return Objects.hash(direction, way, distance);
+        }
+
+
+        }
+
+    private static class SearchNode implements Comparable {
+        long currId;
+        double routeDistance, esitimateDistance, toCompare;
+        SearchNode lastNode;
+
+        SearchNode(long id, double rtDistance, double esDistance, SearchNode lastNode) {
+            this.currId = id;
+            this.routeDistance = rtDistance;
+            this.esitimateDistance = esDistance;
+            this.toCompare = rtDistance + esDistance;
+            this.lastNode = lastNode;
+        }
+
+        @Override
+        public int compareTo(Object o) {
+            if (o == null) {
+                throw new RuntimeException("Can't compare a null!");
+            }
+            if (o.getClass() != this.getClass()) {
+                throw new RuntimeException("Can't compare a SearchNode to a different class");
+            }
+            SearchNode other = (SearchNode) o;
+            double result = this.toCompare - other.toCompare;
+            int retureVal = result < 0 ? -1 : (result > 0 ? 1 : 0);
+            return retureVal;
         }
     }
 }

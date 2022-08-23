@@ -33,15 +33,38 @@ public class TestRouter {
         List<Map<String, Double>> testParams = paramsFromFile();
         List<List<Long>> expectedResults = resultsFromFile();
 
-        for (int i = 0; i < NUM_TESTS; i++) {
+        for (int i = 0; i < 1; i++) {
             System.out.println(String.format("Running test: %d", i));
             Map<String, Double> params = testParams.get(i);
+
+            /** Test statement1 */
+            System.out.println(String.format("The params are:\n\tstart_lon: %f\n\tstart_lat: %f\n\tend_lon: %f\n\tend_lat: %f",
+                    params.get("start_lon"), params.get("start_lat"), params.get("end_lon"), params.get("end_lat")));
+
             List<Long> actual = Router.shortestPath(graph,
                     params.get("start_lon"), params.get("start_lat"),
                     params.get("end_lon"), params.get("end_lat"));
+
+//            /** Test statement2 */
+//            System.out.println(String.format("Having got shortest path of test: %d", i));
+
             List<Long> expected = expectedResults.get(i);
             assertEquals("Your results did not match the expected results", expected, actual);
         }
+    }
+
+    /** This is a simple test, and these two nodes start and end are in a way. */
+    @Test
+    public void test1() throws Exception {
+        List<Long> actual = Router.shortestPath(graph, -122.2437789, 37.8571443,
+                -122.2432446, 37.8566902);
+        List<Long> expected = new ArrayList<>();
+        expected.add(4349679561L);
+        expected.add(4349679560L);
+        expected.add(267632105L);
+        expected.add(57059680L);
+        expected.add(4349679556L);
+        assertEquals("Your results did not match the expected results", expected, actual);
     }
 
     private List<Map<String, Double>> paramsFromFile() throws Exception {
