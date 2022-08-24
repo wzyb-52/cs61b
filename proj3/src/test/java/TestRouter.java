@@ -24,12 +24,21 @@ public class TestRouter {
         if (initialized) {
             return;
         }
+
+        long startTime = System.nanoTime();
         graph = new GraphDB(OSM_DB_PATH);
+        long endTime = System.nanoTime();
+        long totalTime = endTime - startTime;
+        System.out.println(String.format("Initialization time costs: %d", totalTime));
+
         initialized = true;
     }
 
     @Test
     public void testShortestPath() throws Exception {
+
+        long startTime = System.nanoTime();
+
         List<Map<String, Double>> testParams = paramsFromFile();
         List<List<Long>> expectedResults = resultsFromFile();
 
@@ -37,9 +46,9 @@ public class TestRouter {
             System.out.println(String.format("Running test: %d", i));
             Map<String, Double> params = testParams.get(i);
 
-            /** Test statement1 */
-            System.out.println(String.format("The params are:\n\tstart_lon: %f\n\tstart_lat: %f\n\tend_lon: %f\n\tend_lat: %f",
-                    params.get("start_lon"), params.get("start_lat"), params.get("end_lon"), params.get("end_lat")));
+//            /** Test statement1 */
+//            System.out.println(String.format("The params are:\n\tstart_lon: %f\n\tstart_lat: %f\n\tend_lon: %f\n\tend_lat: %f",
+//                    params.get("start_lon"), params.get("start_lat"), params.get("end_lon"), params.get("end_lat")));
 
             List<Long> actual = Router.shortestPath(graph,
                     params.get("start_lon"), params.get("start_lat"),
@@ -51,6 +60,10 @@ public class TestRouter {
             List<Long> expected = expectedResults.get(i);
             assertEquals("Your results did not match the expected results", expected, actual);
         }
+
+        long endTime = System.nanoTime();
+        long totalTime = endTime - startTime;
+        System.out.println(String.format("Finding shortest path time costs: %d", totalTime));
     }
 
     /** This is a simple test, and these two nodes start and end are in a way. */
